@@ -82,6 +82,7 @@ RMAN> startup nomount; (pokud tohle nejde nejspíš je problém s inicializačn�
 RMAN> list failure; (ukáže nalezené chyby a nekonzistence v souborech)
 RMAN> advise failure; (ukáže možná řešení chyb)
 RMAN> repair failure preview; (vytiskne pomocný skript, který by měl opravit problém, pak už jen kopírovat příkazy odsud)
+RMAN> repair failure; (automaticky spustí vygenerovaný skript s opravou)
 
 4) zkontrolování alert logů z /u01/app/oracle/diag/rdbms/orcl12c/orcl12c/trace/alert_orcl12c.log
 
