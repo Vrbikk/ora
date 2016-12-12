@@ -6,6 +6,7 @@ unset TWO_TASK
 ORACLE_HOME = /u01/app/oracle/product/12.1.0.2/db_1
 
 jednotlivé kroky (schody) = startup nomount, alter database mount, alter database open
+přeskočení schodů = startup force
 
   Nastavení DB pro zálohování:
 
@@ -48,7 +49,11 @@ SQL> alter database add logfile member '/home/oracle/redo03.log' to group 3;
 SQL> alter system switch logfile; (spustíme 3x abychom je dali do funkčního stavu)
 - pokud smažeme jeden z šesti redologů poznáme to po restartu DB, že některá bude invalid
 
-5) zálohování samotné DB
+5) záloha inicializačních souborů
+- ručně zálohujeme spfile /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora (lze použít scritp níže)
+bash> mkdir /home/oracle/spfile_backup ; cp /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora /home/oracle/spfile_backup/
+
+6) zálohování samotné DB
 CREATE TABLE persons (id int, name varchar(255)); (přidáme nějaká ukázková data)
 INSERT INTO persons VALUES (1, 'pepa');
 INSERT INTO persons VALUES (2, 'karel');
@@ -60,7 +65,7 @@ RMAN> backup as copy database
 
   Obnova DB:
 
-1) kompletní obnova ze zálohy (je potřeba mít vyplou DB)
+1) kompletní obnova ze zálohy (je potřeba mít vyplou DB, bude fungovat jen pokud máme spfile)
 RMAN> startup nomount;
 RMAN> restore controlfile from autobackup;
 RMAN> alter database mount;
@@ -73,11 +78,13 @@ RMAN> alter database open resetlogs;
 - měli by tu být 3 redology (redo123.log)
 
 3) použití RMAN pro identifikaci problému (z vypnuté DB)
-RMAN> startup nomount; (pokud tohle nejde nejspíš je problém s inicializačním souborem)
+RMAN> startup nomount; (pokud tohle nejde nejspíš je problém s inicializačním souborem viz krok 5)
 RMAN> list failure; (ukáže nalezené chyby a nekonzistence v souborech)
 RMAN> advise failure; (ukáže možná řešení chyb)
 RMAN> repair failure preview; (vytiskne pomocný skript, který by měl opravit problém, pak už jen kopírovat příkazy odsud)
 
 4) zkontrolování alert logů z /u01/app/oracle/diag/rdbms/orcl12c/orcl12c/trace/alert_orcl12c.log
 
-5) zeptat se kde je funkční spfile
+5) pokud při spuštění DB dostáváme "could not open parameter file '/u01/app/oracle/product/12.1.0.2/db_1/dbs/initorcl12c.ora'"
+- je potřeba nakopírovat do cesty zálohovaný spfile (lze použít příkaz níže)
+bash> cp /home/oracle/spfile_backup/*.ora /u01/app/oracle/product/12.1.0.2/db_1/dbs/
