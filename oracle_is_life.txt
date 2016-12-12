@@ -59,6 +59,8 @@ INSERT INTO persons VALUES (1, 'pepa');
 INSERT INTO persons VALUES (2, 'karel');
 commit;
 
+RMAN> backup database plus archivelog; // zeptat se na přednášce
+
 RMAN> backup as backupset database
 RMAN> backup as compressed backupset database
 RMAN> backup as copy database
@@ -78,7 +80,7 @@ RMAN> alter database open resetlogs;
 - měli by tu být 3 redology (redo123.log)
 
 3) použití RMAN pro identifikaci problému (z vypnuté DB)
-RMAN> startup nomount; (pokud tohle nejde nejspíš je problém s inicializačním souborem viz krok 5)
+RMAN> startup nomount; (pokud tohle nejde nejspíš je problém s inicializačním souborem viz krok 5, nebo jde dát jen startup a na nějaké fázi to umře a pak můžeme další příkazy)
 RMAN> list failure; (ukáže nalezené chyby a nekonzistence v souborech)
 RMAN> advise failure; (ukáže možná řešení chyb)
 RMAN> repair failure preview; (vytiskne pomocný skript, který by měl opravit problém, pak už jen kopírovat příkazy odsud)
