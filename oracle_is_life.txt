@@ -70,13 +70,14 @@ RMAN> backup as copy database
 
 - ruční zálohování (před rozbitím)
 
+sudo yum install tree
+
 mkdir /home/oracle/ora_backup
 cp /u01/app/oracle/oradata/orcl12c/control01.ctl /home/oracle/ora_backup/control01.ctl
 cp /u01/app/oracle/oradata/orcl12c/redo01.log /home/oracle/ora_backup/redo01.log
 cp /u01/app/oracle/oradata/orcl12c/redo02.log /home/oracle/ora_backup/redo02.log
 cp /u01/app/oracle/oradata/orcl12c/redo03.log /home/oracle/ora_backup/redo03.log
 cp /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora /home/oracle/ora_backup/spfileorcl12c.ora
-sudo yum install tree
 mkdir /home/oracle/ora_backup/tree/
 tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree.txt
 tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree.txt
