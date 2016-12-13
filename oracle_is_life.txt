@@ -66,9 +66,9 @@ RMAN> backup as backupset database
 RMAN> backup as compressed backupset database
 RMAN> backup as copy database
 
-7) Skriptíky s toníkovo a filípkovo mikulášské dílny - na vlastní nebezpečí
+7) Skriptíky z toníkovo a filípkovo mikulášské dílny - na vlastní nebezpečí
 
-- ruční zálohování (před rozbitím)
+- ruční zálohování (před rozbitím, doporučuji provádět v průběhu kompletní zálohy)
 
 sudo yum install tree
 
@@ -82,7 +82,7 @@ mkdir /home/oracle/ora_backup/tree/
 tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree.txt
 tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree.txt
 
-- diff souborové struktury oraclu (po rozbití)
+- diff souborové struktury oraclu (po rozbití, doporučuji provádět jako první úkon řešení problému)
 
 tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree1.txt
 tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree1.txt
