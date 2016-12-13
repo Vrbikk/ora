@@ -1,4 +1,4 @@
-setxbmap cz
+setxkbmap cz
 
 unset TWO_TASK
   sqlplus / as sysdba  ||  rman target / (RMAN je nutné restartovat pokud restartujeme DB)
@@ -55,16 +55,37 @@ SQL> alter system switch logfile; (spustíme 3x abychom je dali do funkčního s
 BASH> mkdir /home/oracle/spfile_backup ; cp /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora /home/oracle/spfile_backup/
 
 6) zálohování samotné DB
-CREATE TABLE persons (id int, name varchar(255)); (přidáme nějaká ukázková data)
-INSERT INTO persons VALUES (1, 'pepa');
-INSERT INTO persons VALUES (2, 'karel');
-commit;
+SQL> CREATE TABLE persons (id int, name varchar(255)); (přidáme nějaká ukázková data)SQL> 
+SQL> INSERT INTO persons VALUES (1, 'pepa');
+SQL> INSERT INTO persons VALUES (2, 'karel');
+SQL> commit;
 
 RMAN> backup database plus archivelog; // zeptat se na přednášce
 
 RMAN> backup as backupset database
 RMAN> backup as compressed backupset database
 RMAN> backup as copy database
+
+7) Skriptíky s toníkovo a filípkovo mikulášské dílny - na vlastní nebezpečí
+
+- ruční zálohování (před rozbitím)
+
+mkdir /home/oracle/ora_backup
+cp /u01/app/oracle/oradata/orcl12c/control01.ctl /home/oracle/ora_backup/control01.ctl
+cp /u01/app/oracle/oradata/orcl12c/redo01.log /home/oracle/ora_backup/redo01.log
+cp /u01/app/oracle/oradata/orcl12c/redo02.log /home/oracle/ora_backup/redo02.log
+cp /u01/app/oracle/oradata/orcl12c/redo03.log /home/oracle/ora_backup/redo03.log
+cp /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora /home/oracle/ora_backup/spfileorcl12c.ora
+sudo yum install tree
+mkdir /home/oracle/ora_backup/tree/
+tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree.txt
+tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree.txt
+
+- diff souborové struktury oraclu (po rozbití)
+
+tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree1.txt
+tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree1.txt
+diff -y -W80 /home/oracle/ora_backup/tree/oradata_tree.txt /home/oracle/ora_backup/tree/oradata_tree1.txt
 
   Obnova DB:
 
@@ -81,7 +102,7 @@ RMAN> alter database open resetlogs;
 - měli by tu být 3 redology (redo123.log)
 
 3) použití RMAN pro identifikaci problému (z vypnuté DB)
-RMAN> startup; (pokud tohle nejde nejspíš je problém s inicializačním souborem viz krok 5, nebo jde dát jen startup a na nějaké                         fázi to umře a pak můžeme další příkazy)
+RMAN> startup; (pokud umře na nějaké fázi) nebo postupně - startup nomount; atd...
 RMAN> list failure; (ukáže nalezené chyby a nekonzistence v souborech)
 RMAN> advise failure; (ukáže možná řešení chyb)
 RMAN> repair failure preview; (vytiskne pomocný skript, který by měl opravit problém, pak už jen kopírovat příkazy odsud)
