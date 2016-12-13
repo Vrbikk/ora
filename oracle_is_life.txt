@@ -21,9 +21,10 @@ SQL> alter database open;
 SQL> show parameter control; (zobrazí cesty k řídicím souborům, jeden z nich kopírujeme třeba do /home/oracle/control03.ctl)
 SQL> shutdown immediate;
 SQL> create pfile from spfile; (vytvoří inicializační soubor pro čtení, DB nesmí běžet)
-- cesta k pfile souboru: /u01/app/oracle/product/12.1.0.2/db_1/dbs/initorcl12c.ora
-- upravíme řádek *.control_files='/u01/app/oracle/oradata/orcl12c/control01.ctl','/u01/app/oracle/fast_recovery_area/orcl12c/control02.ctl', '/home/oracle/control03.ctl'
-- uložíme pfile soubor
+      - cesta k pfile souboru: /u01/app/oracle/product/12.1.0.2/db_1/dbs/initorcl12c.ora
+      - upravíme řádek  *.control_files='/u01/app/oracle/oradata/orcl12c/control01.ctl','/u01/app/oracle/fast_recovery_area/orcl12c/control02.ctl', '/home/oracle/control03.ctl'
+      - uložíme pfile soubor
+BASH> cp /u01/app/oracle/oradata/orcl12c/control01.ctl /home/oracle/control03.ctl
 SQL> create spfile from pfile;
 SQL> startup;
 
@@ -51,7 +52,7 @@ SQL> alter system switch logfile; (spustíme 3x abychom je dali do funkčního s
 
 5) záloha inicializačních souborů
 - ručně zálohujeme spfile /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora (lze použít scritp níže)
-bash> mkdir /home/oracle/spfile_backup ; cp /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora /home/oracle/spfile_backup/
+BASH> mkdir /home/oracle/spfile_backup ; cp /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora /home/oracle/spfile_backup/
 
 6) zálohování samotné DB
 CREATE TABLE persons (id int, name varchar(255)); (přidáme nějaká ukázková data)
@@ -80,14 +81,16 @@ RMAN> alter database open resetlogs;
 - měli by tu být 3 redology (redo123.log)
 
 3) použití RMAN pro identifikaci problému (z vypnuté DB)
-RMAN> startup nomount; (pokud tohle nejde nejspíš je problém s inicializačním souborem viz krok 5, nebo jde dát jen startup a na nějaké fázi to umře a pak můžeme další příkazy)
+RMAN> startup; (pokud tohle nejde nejspíš je problém s inicializačním souborem viz krok 5, nebo jde dát jen startup a na nějaké                         fázi to umře a pak můžeme další příkazy)
 RMAN> list failure; (ukáže nalezené chyby a nekonzistence v souborech)
 RMAN> advise failure; (ukáže možná řešení chyb)
 RMAN> repair failure preview; (vytiskne pomocný skript, který by měl opravit problém, pak už jen kopírovat příkazy odsud)
 RMAN> repair failure; (automaticky spustí vygenerovaný skript s opravou)
+- když jsou smazaný všechny tři redology Rman opraví jenom redolog02.log a redolog03.log, pak už ani nenabídne pomoc, že máme opravit     manuálně -> nakopírujem ručně ze zálohy
+BASH> cp /home/oracle/redo01.log /u01/app/oracle/oradata/orcl12c
 
 4) zkontrolování alert logů z /u01/app/oracle/diag/rdbms/orcl12c/orcl12c/trace/alert_orcl12c.log
 
 5) pokud při spuštění DB dostáváme "could not open parameter file '/u01/app/oracle/product/12.1.0.2/db_1/dbs/initorcl12c.ora'"
 - je potřeba nakopírovat do cesty zálohovaný spfile (lze použít příkaz níže)
-bash> cp /home/oracle/spfile_backup/*.ora /u01/app/oracle/product/12.1.0.2/db_1/dbs/
+BASH> cp /home/oracle/spfile_backup/*.ora /u01/app/oracle/product/12.1.0.2/db_1/dbs/
