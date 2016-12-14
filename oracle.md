@@ -110,25 +110,25 @@ RMAN> backup as copy database
 * heslo pro sudo je **oracle**
 
 ```bash
-BASH> sudo yum install tree
+sudo yum install tree
 
-BASH> mkdir /home/oracle/ora_backup
-BASH> cp /u01/app/oracle/oradata/orcl12c/control01.ctl /home/oracle/ora_backup/control01.ctl
-BASH> cp /u01/app/oracle/oradata/orcl12c/redo01.log /home/oracle/ora_backup/redo01.log
-BASH> cp /u01/app/oracle/oradata/orcl12c/redo02.log /home/oracle/ora_backup/redo02.log
-BASH> cp /u01/app/oracle/oradata/orcl12c/redo03.log /home/oracle/ora_backup/redo03.log
-BASH> cp /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora /home/oracle/ora_backup/spfileorcl12c.ora
-BASH> mkdir /home/oracle/ora_backup/tree/
-BASH> tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree.txt
-BASH> tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree.txt
+mkdir /home/oracle/ora_backup
+cp /u01/app/oracle/oradata/orcl12c/control01.ctl /home/oracle/ora_backup/control01.ctl
+cp /u01/app/oracle/oradata/orcl12c/redo01.log /home/oracle/ora_backup/redo01.log
+cp /u01/app/oracle/oradata/orcl12c/redo02.log /home/oracle/ora_backup/redo02.log
+cp /u01/app/oracle/oradata/orcl12c/redo03.log /home/oracle/ora_backup/redo03.log
+cp /u01/app/oracle/product/12.1.0.2/db_1/dbs/spfileorcl12c.ora /home/oracle/ora_backup/spfileorcl12c.ora
+mkdir /home/oracle/ora_backup/tree/
+tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree.txt
+tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree.txt
 ```
 
 * diff souborové struktury oraclu (po rozbití, doporučuji provádět jako první úkon řešení problému)
   - zobrazí, který soubory chybí
 ```bash
-BASH> tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree1.txt
-BASH> tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree1.txt
-BASH> diff -y -W80 /home/oracle/ora_backup/tree/oradata_tree.txt /home/oracle/ora_backup/tree/oradata_tree1.txt
+tree /u01/app/oracle/oradata/orcl12c/ > /home/oracle/ora_backup/tree/oradata_tree1.txt
+tree /u01/app/oracle/product/12.1.0.2/db_1/dbs/ >> /home/oracle/ora_backup/tree/oradata_tree1.txt
+diff -y -W80 /home/oracle/ora_backup/tree/oradata_tree.txt /home/oracle/ora_backup/tree/oradata_tree1.txt
 ```
 #Obnova DB:
 
