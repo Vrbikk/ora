@@ -116,3 +116,25 @@ BASH> cp /home/oracle/redo01.log /u01/app/oracle/oradata/orcl12c
 5) pokud při spuštění DB dostáváme "could not open parameter file '/u01/app/oracle/product/12.1.0.2/db_1/dbs/initorcl12c.ora'"
 - je potřeba nakopírovat do cesty zálohovaný spfile (lze použít příkaz níže)
 BASH> cp /home/oracle/spfile_backup/*.ora /u01/app/oracle/product/12.1.0.2/db_1/dbs/
+
+6) u příkladu kde chtěl vrátit tabulku o jeden krok zpět (kdy je v tabulce řádek cislo=1):
+SQL> create table test(cislo number(3));
+SQL> insert into test values (1);
+SQL> commit;
+
+BASH> date - zapamotovat si čas, např Wed Dec 14 09:20:05 EST 2016
+
+SQL> alter system switch logfile;
+SQL> update test set cislo = 100;
+SQL> commit;
+
+- pak nám rozbije DB, pomocí RMANU a věcí tady nahoře obnovim databázi, nastartuju 
+
+SQL> SELECT * FROM test AS OF TIMESTAMP TO_TIMESTAMP('2016-12-14 09:20:05', 'YYYY-MM-DD HH:MI:SS');
+      - dám tam náš čas, kterej jsme si vytisknuli v konzoli před upravováním řádku 
+      - měl by se nám vypsat řádek CISLO
+                                   -----
+                                       1
+      - když se vypíše správnej řádek můžu pokračovat - jinak asi zkoušet upravovat čas než nám vrátí správnou hodnotu
+
+SQL> UPDATE test SET cislo = (SELECT * FROM test AS OF TIMESTAMP TO_TIMESTAMP('2016-12-14 09:20:05', 'YYYY-MM-DD HH:MI:SS'));
