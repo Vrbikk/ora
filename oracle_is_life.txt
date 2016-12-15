@@ -131,6 +131,7 @@ SQL> commit;
 
 - pak nám rozbije DB, pomocí RMANU a věcí tady nahoře obnovim databázi, nastartuju 
 
+
 SQL> SELECT * FROM test AS OF TIMESTAMP TO_TIMESTAMP('2016-12-14 09:20:05', 'YYYY-MM-DD hh24:MI:SS');
       - dám tam náš čas, kterej jsme si vytisknuli v konzoli před upravováním řádku 
       - měl by se nám vypsat řádek CISLO
@@ -138,4 +139,6 @@ SQL> SELECT * FROM test AS OF TIMESTAMP TO_TIMESTAMP('2016-12-14 09:20:05', 'YYY
                                        1
       - když se vypíše správnej řádek můžu pokračovat - jinak asi zkoušet upravovat čas než nám vrátí správnou hodnotu
 
+
 SQL> UPDATE test SET cislo = (SELECT * FROM test AS OF TIMESTAMP TO_TIMESTAMP('2016-12-14 09:20:05', 'YYYY-MM-DD hh24:MI:SS'));
+
